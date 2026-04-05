@@ -51,30 +51,34 @@ jobs:
     if: github.event_name != 'pull_request'
     needs: build-and-push
     runs-on: self-hosted
-    # 윈도우 러너에서도 기본적으로 bash(리눅스 쉘)를 사용하여 파이프(|)나 || true 문법이 에러 나지 않게 강제 설정합니다.
+    # 윈도우 러너의 기본 쉘인 PowerShell을 사용합니다.
     defaults:
       run:
-        shell: bash
+        shell: powershell
 
     steps:
       - name: Login to Docker Hub
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+          $env:DOCKER_TOKEN | docker login -u $env:DOCKER_USER --password-stdin
 
       - name: Pull the latest Docker image
-        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/sentiment-api:latest
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: docker pull $env:DOCKER_USER/sentiment-api:latest
 
       - name: Stop and remove the existing container
+        # 기존 컨테이너가 없어도 파이프라인이 멈추지 않도록 에러 무시를 활성화합니다.
+        continue-on-error: true
         run: |
-          # 기존 컨테이너가 실행 중이면 중지 및 삭제 (컨테이너가 없어도 실패하지 않게 || true 사용)
-          docker stop sentiment-api-container || true
-          docker rm sentiment-api-container || true
+          docker stop sentiment-api-container
+          docker rm sentiment-api-container
 
       - name: Run the new container
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          # 백그라운드(-d)로 실행하고, 포트를 연결(-p)하며, 재시작 정책을 추가합니다.
-          docker run -d \
-            --name sentiment-api-container \
-            -p 8000:8000 \
-            --restart unless-stopped \
-            ${{ secrets.DOCKERHUB_USERNAME }}/sentiment-api:latest
+          # 윈도우 파워쉘에 맞게 한 줄로 연결해서 실행합니다.
+          docker run -d --name sentiment-api-container -p 8000:8000 --restart unless-stopped $env:DOCKER_USER/sentiment-api:latest
