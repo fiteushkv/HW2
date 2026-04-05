@@ -51,6 +51,10 @@ jobs:
     if: github.event_name != 'pull_request'
     needs: build-and-push
     runs-on: self-hosted
+    # 윈도우 러너에서도 기본적으로 bash(리눅스 쉘)를 사용하여 파이프(|)나 || true 문법이 에러 나지 않게 강제 설정합니다.
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - name: Login to Docker Hub
