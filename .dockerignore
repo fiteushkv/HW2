@@ -1,0 +1,25 @@
+# Python 컴파일 바이너리
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 가상 환경 (Virtual Environment) 폴더
+env/
+venv/
+.env/
+
+# IDE 관련 폴더
+.vscode/
+.idea/
+
+# Git & CI/CD 관련
+.git/
+.gitignore
+.github/
+
+# 도커 관련 (자신 제외)
+Dockerfile
+.dockerignore
+
+# 기타
+*.log
