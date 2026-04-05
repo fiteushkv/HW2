@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sentiment Analysis</title>
+    <!-- 고급스러운 Inter 폰트 사용 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- 배경 애니메이션 효과 (디자인 미학 요소) -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <main class="container">
+        <!-- 메인 글래스모피즘(Glassmorphism) 카드 UI -->
+        <div class="glass-card">
+            <header>
+                <h1>AI Sentiment Analyzer</h1>
+                <p>Type any text below and let our AI discover its true emotion.</p>
+            </header>
+
+            <form id="analyze-form">
+                <textarea id="text-input" placeholder="E.g., I absolutely love this! It's so amazing." required></textarea>
+                <button type="submit" id="submit-btn">
+                    <span class="btn-text">🚀 Analyze Emotion</span>
+                    <span class="loader" style="display: none;"></span>
+                </button>
+            </form>
+
+            <!-- 결과 출력 박스 (초기엔 숨겨둠) -->
+            <div id="result-box" class="hidden">
+                <div class="result-header">
+                    <span id="sentiment-icon">🤔</span>
+                    <h2 id="sentiment-text">Neutral</h2>
+                </div>
+                <div class="score-container">
+                    <div class="score-label">Confidence Score <span id="score-value">0%</span></div>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

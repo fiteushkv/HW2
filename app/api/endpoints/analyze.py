@@ -13,5 +13,6 @@ async def analyze_sentiment(request: SentimentRequest):
     return SentimentResponse(
         text=request.text,
         sentiment=result["sentiment"],
-        score=result["score"]
+        score=result["score"],
+        context_emoji=result["context_emoji"]
     )
