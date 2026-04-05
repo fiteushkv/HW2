@@ -44,3 +44,33 @@ jobs:
           # 레이어 캐시 적용
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/sentiment-api:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/sentiment-api:buildcache,mode=max
+
+  deploy:
+    name: Deploy to Local Machine (Self-hosted)
+    # Pull Request가 아닌 실제 Push일 경우, 그리고 앞선 build-and-push 작업이 성공했을 때만 실행
+    if: github.event_name != 'pull_request'
+    needs: build-and-push
+    runs-on: self-hosted
+
+    steps:
+      - name: Login to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Pull the latest Docker image
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/sentiment-api:latest
+
+      - name: Stop and remove the existing container
+        run: |
+          # 기존 컨테이너가 실행 중이면 중지 및 삭제 (컨테이너가 없어도 실패하지 않게 || true 사용)
+          docker stop sentiment-api-container || true
+          docker rm sentiment-api-container || true
+
+      - name: Run the new container
+        run: |
+          # 백그라운드(-d)로 실행하고, 포트를 연결(-p)하며, 재시작 정책을 추가합니다.
+          docker run -d \
+            --name sentiment-api-container \
+            -p 8000:8000 \
+            --restart unless-stopped \
+            ${{ secrets.DOCKERHUB_USERNAME }}/sentiment-api:latest
