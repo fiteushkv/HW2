@@ -62,7 +62,7 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          $env:DOCKER_TOKEN | docker login -u $env:DOCKER_USER --password-stdin
+          docker login -u $env:DOCKER_USER -p "$env:DOCKER_TOKEN"
 
       - name: Pull the latest Docker image
         env:
